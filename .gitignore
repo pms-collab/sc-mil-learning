@@ -1,0 +1,10 @@
+# Data files
+*.h5ad
+*.csv
+*.pt
+data/
+
+# Python cache
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
