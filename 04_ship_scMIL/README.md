@@ -65,8 +65,7 @@ pip install -r requirements.txt
   - `outputs/run_dev/logs/*.log`
 
 
-
-### Troubleshooting(paste if blocked)
+## Troubleshooting(paste if blocked)
 ```text
 - commit hash:
 - command you ran:
