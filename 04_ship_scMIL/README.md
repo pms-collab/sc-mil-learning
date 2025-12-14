@@ -100,3 +100,4 @@ creates:
 - `outputs/run_dev/leakage_check.txt` contains `group overlap = 0`
 - `outputs/run_dev/logs/` contains `*.log`
 
+Note: current pipeline is a stub scaffold; real GSE96583 + MIL training will replace stubs next.
