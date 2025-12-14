@@ -10,6 +10,7 @@ Reproducible scRNA-MIL pipeline with:
 ```bash
 # positional args: <CONFIG> <OUT>
 bash scripts/run_all.sh configs/base.yaml outputs/run_dev
+```
 
 ## Outputs (DoD)
 After the command finishes with exit code 0:
