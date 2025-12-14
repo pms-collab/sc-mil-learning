@@ -1,0 +1,32 @@
+seed: 42
+
+data:
+  dataset: "GSE96583"
+  root: "data"
+
+qc:
+  min_genes: 200
+  max_genes: 2500
+  max_mt_pct: 5.0
+  min_cells_per_gene: 3
+
+features:
+  hvg: 2000
+  pca_dim: 50
+
+bags:
+  bag_id_col: "sample_id"
+  label_col: "condition"
+  group_id_col: "donor_id"
+
+split:
+  method: "group_holdout"
+  group_col: "donor_id"
+  test_size: 0.2
+  val_size: 0.1
+
+mil:
+  model: "meanpool"   # 먼저 meanpool로 end-to-end 성공 후 "abmil"로 변경
+  epochs: 5
+  batch_size: 1
+  lr: 1e-3
