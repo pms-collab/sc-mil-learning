@@ -26,4 +26,52 @@ Required obs/metadata columns (exact names):
 Required bags.parquet columns:
 - cell_id, bag_id, label, group_id, split
 
+## Pipeline steps (executed by `scripts/run_all.sh`)
+1) Download/cache dataset (GSE96583)
+2) Preprocess: QC → normalize/log1p → HVG → PCA → save features
+3) Build bags + group split (`group_id = donor_id`)
+4) Train MIL (`meanpool` baseline, then `abmil`)
+5) Evaluate → metrics + per-class
+6) Leakage check → write `leakage_check.txt` (FAIL => non-zero exit)
+
+## Output layout (expected files)
+After a successful run, the following paths must exist:
+- `outputs/run_dev/logs/01_download.log`
+- `outputs/run_dev/logs/02_preprocess.log`
+- `outputs/run_dev/logs/03_build_bags.log`
+- `outputs/run_dev/logs/04_train.log`
+- `outputs/run_dev/logs/05_eval.log`
+- `outputs/run_dev/artifacts/processed.h5ad`
+- `outputs/run_dev/artifacts/features.parquet` (or `features.npy`)
+- `outputs/run_dev/artifacts/bags.parquet`
+- `outputs/run_dev/preds/preds.parquet`
+- `outputs/run_dev/metrics/metrics.csv`
+- `outputs/run_dev/metrics/per_class.csv` (optional but recommended)
+- `outputs/run_dev/leakage_check.txt`
+
+## Installation
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+## Currenet state (checkpoint DoD)
+- scripts/run_all.sh exists
+- configs/base.yaml exists
+- running bash scripts/run_all.sh configs/base.yaml outputs/run_dev creates:
+  - outputs/run_dev/metrics/metrics.csv with column macro_f1
+  - outputs/run_dev/leakage_check.txt containing group overlap = 0
+  - outputs/run_dev/logs/*.log
+
+## Troubleshooting (paste if blocked)
+- commit hash:
+- command you ran:
+- OS (Windows/WSL/Linux):
+- python -V:
+- pip freeze (first 30 lines):
+- last 200 lines of the failing log:
+- tree -a -L 4 outputs/run_dev:
+- contents of outputs/run_dev/leakage_check.txt:
+
 
