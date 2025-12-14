@@ -66,9 +66,7 @@ pip install -r requirements.txt
 
 
 
-### Troubleshooting
-```md
-## Troubleshooting (paste if blocked)
+### Troubleshooting(paste if blocked)
 ```text
 - commit hash:
 - command you ran:
@@ -98,9 +96,8 @@ Set in `configs/base.yaml`:
 ```bash
 bash scripts/run_all.sh configs/base.yaml outputs/run_dev
 ```
+creates:
 - `outputs/run_dev/metrics/metrics.csv` has column `macro_f1`
 - `outputs/run_dev/leakage_check.txt` contains `group overlap = 0`
 - `outputs/run_dev/logs/` contains `*.log`
-- 
-
 
