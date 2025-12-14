@@ -14,9 +14,9 @@ bash scripts/run_all.sh configs/base.yaml outputs/run_dev
 
 ## Outputs (DoD)
 After the command finishes with exit code 0:
-- outputs/run_dev/metrics/metrics.csv exists and has column macro_f1
-- outputs/run_dev/leakage_check.txt exists and contains group overlap = 0
-- outputs/run_dev/logs/*.log exists
+- `outputs/run_dev/metrics/metrics.csv` exists and has column `macro_f1`
+- `outputs/run_dev/leakage_check.txt` exists and contains `group overlap = 0`
+- `outputs/run_dev/logs/*.log` exists
 
 ## Config contract (must match column names)
 Required obs/metadata columns (exact names):
@@ -57,14 +57,19 @@ pip install -r requirements.txt
 ```
 
 ## Currenet state (checkpoint DoD)
-- scripts/run_all.sh exists
-- configs/base.yaml exists
-- running bash scripts/run_all.sh configs/base.yaml outputs/run_dev creates:
-  - outputs/run_dev/metrics/metrics.csv with column macro_f1
-  - outputs/run_dev/leakage_check.txt containing group overlap = 0
-  - outputs/run_dev/logs/*.log
+- `scripts/run_all.sh` exists
+- `configs/base.yaml` exists
+- running `bash scripts/run_all.sh configs/base.yaml outputs/run_dev` creates:
+  - `outputs/run_dev/metrics/metrics.csv` with column `macro_f1`
+  - `outputs/run_dev/leakage_check.txt` containing `group overlap = 0`
+  - `outputs/run_dev/logs/*.log`
 
+
+
+### Troubleshooting
+```md
 ## Troubleshooting (paste if blocked)
+```text
 - commit hash:
 - command you ran:
 - OS (Windows/WSL/Linux):
@@ -73,5 +78,29 @@ pip install -r requirements.txt
 - last 200 lines of the failing log:
 - tree -a -L 4 outputs/run_dev:
 - contents of outputs/run_dev/leakage_check.txt:
+```
+
+## Data access
+- Raw/cache data directory: `data/` (gitignored)
+- Expected structure (created by downloader):
+  - `data/raw/gse96583/`
+  - `data/raw/gse96583/metadata.csv` (must include `cell_id, donor_id, condition, sample_id`)
+
+## Model selection
+Set in `configs/base.yaml`:
+- `mil.model: meanpool` (baseline, first milestone)
+- `mil.model: abmil` (submission model)
+
+## Current state (checkpoint DoD)
+- [ ] `scripts/run_all.sh` exists
+- [ ] `configs/base.yaml` exists
+- [ ] Running the command creates DoD outputs:
+```bash
+bash scripts/run_all.sh configs/base.yaml outputs/run_dev
+```
+- `outputs/run_dev/metrics/metrics.csv` has column `macro_f1`
+- `outputs/run_dev/leakage_check.txt` contains `group overlap = 0`
+- `outputs/run_dev/logs/` contains `*.log`
+- 
 
 
