@@ -5,6 +5,16 @@ Steps: download → build `raw.h5ad` → preprocess → build MIL bags (group-sp
 
 ## Quickstart (WSL/Ubuntu)
 
+### Get the code
+```bash
+# Option A) Clone the repo
+git clone https://github.com/pms-collab/sc-mil-learning.git
+cd sc-mil-learning/04_ship_scMIL
+
+# Option B) If you already cloned the mono-repo
+cd sc-mil-learning/04_ship_scMIL
+```
+
 ### Environment (conda recommended)
 ```bash
 conda env create -f environment.yml
