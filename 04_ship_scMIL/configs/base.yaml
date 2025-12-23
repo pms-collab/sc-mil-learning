@@ -1,8 +1,21 @@
 seed: 42
 
 data:
-  dataset: "GSE96583"
-  root: "data"
+  root: data
+  dataset: gse96583_batch2
+  sources:
+    gse96583_batch2:
+      suppl_base_url: "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE96nnn/GSE96583/suppl"
+      files:
+        tar: "GSE96583_RAW.tar"
+        genes: "GSE96583_batch2.genes.tsv.gz"
+        meta: "GSE96583_batch2.total.tsne.df.tsv.gz"
+        extracted:
+          ctrl_mtx: "GSM2560248_2.1.mtx.gz"
+          ctrl_barcodes: "GSM2560248_barcodes.tsv.gz"
+          stim_mtx: "GSM2560249_2.2.mtx.gz"
+          stim_barcodes: "GSM2560249_barcodes.tsv.gz"
+
 
 qc:
   min_genes: 200

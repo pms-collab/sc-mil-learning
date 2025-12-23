@@ -1,0 +1,121 @@
+param(
+  [string]$Config = "configs\base.yaml",
+  [string]$RunDir = "runs\gse96583_batch2\e2e_dev",
+  [switch]$Force
+)
+
+$ErrorActionPreference = "Stop"
+
+function Assert-File([string]$p) {
+  if (-not (Test-Path $p)) { throw "Missing file: $p" }
+}
+function Ensure-Dir([string]$p) {
+  New-Item -ItemType Directory -Force -Path $p | Out-Null
+}
+
+function Run-PythonStep(
+  [string]$Name,
+  [string]$LogPath,
+  [string[]]$Args
+) {
+  Write-Host "[run_all] $Name"
+  Ensure-Dir (Split-Path $LogPath)
+
+  # Force-create log file early (so you can't claim it wasn't created)
+  "" | Out-File -FilePath $LogPath -Encoding utf8
+
+  $p = Start-Process -FilePath "python" `
+    -ArgumentList $Args `
+    -NoNewWindow `
+    -Wait `
+    -PassThru `
+    -RedirectStandardOutput $LogPath `
+    -RedirectStandardError  $LogPath
+
+  if ($p.ExitCode -ne 0) {
+    Write-Host "[run_all] FAIL $Name exit=$($p.ExitCode). Tail log:"
+    Get-Content $LogPath -Tail 200 | Out-Host
+    throw "Step failed: $Name (exit=$($p.ExitCode)). See $LogPath"
+  }
+
+  # Show tail for visibility
+  Get-Content $LogPath -Tail 40 | Out-Host
+}
+
+# Run from repo root (parent of scripts/)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootDir = Resolve-Path (Join-Path $ScriptDir "..")
+Set-Location $RootDir
+
+Write-Host "[run_all] root=$RootDir"
+Write-Host "[run_all] config=$Config"
+Write-Host "[run_all] run_dir=$RunDir"
+
+Assert-File $Config
+Ensure-Dir $RunDir
+Ensure-Dir (Join-Path $RunDir "logs")
+
+# Hard check: yaml import must work in THIS python
+$pyInfo = python -c "import sys; print(sys.executable)"
+Write-Host "[run_all] python=$pyInfo"
+python -c "import yaml; print('yaml_ok')" | Out-Null
+
+$PreprocessOut = Join-Path $RunDir "preprocess"
+$BagsOut       = Join-Path $RunDir "bags"
+$TrainOut      = Join-Path $RunDir "train\meanpool_v1"
+$EvalOut       = Join-Path $RunDir "eval\test_only"
+
+$forceArg = @()
+if ($Force) { $forceArg = @("--force") }
+
+# 01) download
+Run-PythonStep "01_download" (Join-Path $RunDir "logs\01_download.log") `
+  (@("-u","-m","src.data.download","--config",$Config) + $forceArg)
+
+# Sanity: raw.h5ad must exist after download (derive path from yaml using same python)
+$RawPath = python -c @"
+import yaml, pathlib
+cfg=yaml.safe_load(pathlib.Path(r'$Config').read_text(encoding='utf-8'))
+root=pathlib.Path(cfg['data'].get('root','data'))
+ds=str(cfg['data']['dataset'])
+print((root/'raw'/ds/'raw.h5ad').as_posix())
+"@
+$RawPath = $RawPath.Trim()
+Assert-File $RawPath
+
+# 02) preprocess
+Run-PythonStep "02_preprocess" (Join-Path $RunDir "logs\02_preprocess.log") `
+  @("-u","-m","src.preprocess","--config",$Config,"--out",$PreprocessOut)
+
+$Processed = Join-Path $PreprocessOut "artifacts\processed.h5ad"
+Assert-File $Processed
+
+# 03) build_bags
+Run-PythonStep "03_build_bags" (Join-Path $RunDir "logs\03_build_bags.log") `
+  ((@("-u","-m","src.build_bags","--config",$Config,"--out",$BagsOut,"--preprocess_out",$PreprocessOut)) + $forceArg)
+
+Assert-File (Join-Path $BagsOut "bags.npz")
+Assert-File (Join-Path $BagsOut "bags_meta.csv")
+Assert-File (Join-Path $BagsOut "split_bags.csv")
+
+# 04) leakage check
+Run-PythonStep "04_check_leakage" (Join-Path $RunDir "logs\04_check_leakage.log") `
+  @("-u","-m","src.check_leakage","--bags_dir",$BagsOut,"--out",(Join-Path $BagsOut "artifacts\leakage_report.json"))
+
+Assert-File (Join-Path $BagsOut "artifacts\leakage_report.json")
+
+# 05) train
+Run-PythonStep "05_train" (Join-Path $RunDir "logs\05_train.log") `
+  @("-u","-m","src.train","--config",$Config,"--bags_dir",$BagsOut,"--out",$TrainOut)
+
+$Best = Join-Path $TrainOut "checkpoints\best.pt"
+Assert-File $Best
+
+# 06) eval
+Run-PythonStep "06_eval_test" (Join-Path $RunDir "logs\06_eval.log") `
+  @("-u","-m","src.eval","--bags_dir",$BagsOut,"--ckpt",$Best,"--out",$EvalOut,"--splits","test")
+
+Assert-File (Join-Path $EvalOut "metrics.json")
+Assert-File (Join-Path $EvalOut "predictions.csv")
+
+Write-Host "[run_all] DONE: $RunDir"

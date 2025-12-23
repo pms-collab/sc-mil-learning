@@ -1,3 +1,0 @@
-cell_id,bag_id,label,group_id,split
-cell_0,donor_0_control,control,donor_0,train
-cell_1,donor_1_stimulated,stimulated,donor_1,test

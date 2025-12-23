@@ -64,7 +64,7 @@ def main():
     shutil.copyfile(args.config, art / "config_resolved.yaml")
 
     raw_h5ad = resolve_raw_h5ad(cfg)
-    adata = sc.read_h5ad(str(raw_h5ad))
+    adata = sc.read_h5ad(raw_h5ad)
 
     # Ensure a stable cell identifier
     if "cell_id" not in adata.obs.columns:
@@ -93,7 +93,9 @@ def main():
     min_cells_per_gene = int(qc.get("min_cells_per_gene", 3))
 
     # Identify mitochondrial genes and compute QC metrics
-    adata.var["mt"] = infer_mt_mask(adata.var_names)
+    # Identify mitochondrial genes and compute QC metrics
+    mt_source = adata.var["symbol"] if "symbol" in adata.var.columns else adata.var_names.to_series()
+    adata.var["mt"] = infer_mt_mask(mt_source)
     sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
 
     # Basic filters
@@ -103,8 +105,17 @@ def main():
     if "n_genes_by_counts" in adata.obs.columns:
         adata = adata[adata.obs["n_genes_by_counts"] <= max_genes].copy()
 
+    if "multiplets" in adata.obs.columns:
+        vc = adata.obs["multiplets"].astype(str).str.lower().value_counts().to_dict()
+        print(f"[preprocess] multiplets counts: {vc}")
+        adata = adata[adata.obs["multiplets"].astype(str).str.lower().eq("singlet")].copy()
+
     # Only filter on mt% if mt genes exist
-    if adata.var["mt"].any() and "pct_counts_mt" in adata.obs.columns:
+    if (
+            adata.var["mt"].any()
+            and "pct_counts_mt" in adata.obs.columns
+            and float(adata.obs["pct_counts_mt"].max()) > 0.0
+    ):
         adata = adata[adata.obs["pct_counts_mt"] <= max_mt_pct].copy()
 
     # Preserve raw counts BEFORE normalization/log1p.
@@ -118,7 +129,7 @@ def main():
 
     # Save
     processed_path = art / "processed.h5ad"
-    adata.write_h5ad(str(processed_path))
+    adata.write_h5ad(processed_path)
 
     print(f"[preprocess] raw_h5ad={raw_h5ad}")
     print(f"[preprocess] wrote {processed_path}")

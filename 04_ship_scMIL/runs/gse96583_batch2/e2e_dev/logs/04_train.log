@@ -1,0 +1,13 @@
+﻿[cmd] C:\Users\SAMSUNG\miniconda3\envs\scmil\python.exe -u -m src.train --config C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\configs\base.yaml --bags_dir C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\bags --out C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\train\baseline --force
+2025-12-23 15:49:00,337 | INFO | bags_dir=C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\bags
+2025-12-23 15:49:00,337 | INFO | n_bags=16 | n_cells=24560 | feat_dim=50
+2025-12-23 15:49:00,337 | INFO | split bags: train=10 val=2 test=4
+2025-12-23 15:49:00,346 | INFO | device=cpu
+2025-12-23 15:49:00,346 | INFO | model=meanpool | in_dim=50 | n_classes=2
+2025-12-23 15:49:03,790 | INFO | ep=1 | train loss=0.6321 acc=0.700 | val loss=0.5584 acc=1.000 | test acc=1.000 | 0.10s
+2025-12-23 15:49:03,857 | INFO | ep=2 | train loss=0.5157 acc=1.000 | val loss=0.4594 acc=1.000 | test acc=1.000 | 0.05s
+2025-12-23 15:49:03,923 | INFO | ep=3 | train loss=0.4203 acc=1.000 | val loss=0.3720 acc=1.000 | test acc=1.000 | 0.06s
+2025-12-23 15:49:03,985 | INFO | ep=4 | train loss=0.3363 acc=1.000 | val loss=0.2965 acc=1.000 | test acc=1.000 | 0.06s
+2025-12-23 15:49:04,044 | INFO | ep=5 | train loss=0.2687 acc=1.000 | val loss=0.2311 acc=1.000 | test acc=1.000 | 0.06s
+2025-12-23 15:49:04,082 | INFO | Wrote summary.json and history.csv
+2025-12-23 15:49:04,082 | INFO | FINAL val acc=1.000 | test acc=1.000

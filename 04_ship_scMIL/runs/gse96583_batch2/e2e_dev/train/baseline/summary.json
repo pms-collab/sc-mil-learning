@@ -1,0 +1,24 @@
+{
+  "best_ckpt": "C:\\Users\\SAMSUNG\\Desktop\\sc-mil-learning\\04_ship_scMIL\\runs\\gse96583_batch2\\e2e_dev\\train\\baseline\\checkpoints\\best.pt",
+  "final_val": {
+    "loss": 0.23111063241958618,
+    "acc": 1.0,
+    "n_bags": 2
+  },
+  "final_test": {
+    "loss": 0.2338453233242035,
+    "acc": 1.0,
+    "n_bags": 4
+  },
+  "label_names": [
+    "ctrl",
+    "stim"
+  ],
+  "n_bags": 16,
+  "n_cells": 24560,
+  "splits": {
+    "train_bags": 10,
+    "val_bags": 2,
+    "test_bags": 4
+  }
+}
