@@ -12,6 +12,19 @@ docker --version
 docker version
 ```
 
+### Install Docker (first time only)
+- **Windows/macOS (recommended): Docker Desktop**
+  - https://docs.docker.com/desktop/
+- **Linux (recommended): Docker Engine**
+  - https://docs.docker.com/engine/install/
+  - (Optional) Docker Desktop for Linux is also available, but Engine is the common default.
+
+Quick check:
+```bash
+docker --version
+docker version
+```
+
 ### Get the code
 #### Option A) Clone (recommended)
 ```bash
@@ -57,7 +70,9 @@ docker run --rm -it \
     --force
 ```
 
-#### Windows (Powershell)
+#### Windows: choose one execution path
+- **Path A) WSL2 (recommended)**: run the Linux/WSL command inside WSL (Ubuntu).
+- **Path B) PowerShell (supported)**: run the PowerShell command below (Docker Desktop must be running; drive sharing enabled).
 ```powershell
 docker run --rm -it `
   -e HOME=/tmp `
