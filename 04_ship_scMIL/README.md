@@ -31,6 +31,8 @@ chmod +x scripts/run_all.sh
 ## Output (expected)
 After a successful run:
 - Raw AnnData: data/raw/gse96583_batch2/raw.h5ad
+
+<Rundir> = runs/gse96583_batch2/wsl_e2e
 - Processed AnnData: <RunDir>/preprocess/artifacts/processed.h5ad
 - Bags: <RunDir>/bags/
   - bags.npz, bags_meta.csv, split_bags.csv, bags.ok
