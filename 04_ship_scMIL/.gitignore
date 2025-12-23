@@ -1,0 +1,19 @@
+# outputs
+runs/
+artifacts/
+__pycache__/
+*.pyc
+
+# data
+data/raw/
+data/**/_download/
+*.h5ad
+*.npz
+*.csv.gz
+*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
