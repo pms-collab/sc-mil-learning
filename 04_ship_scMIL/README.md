@@ -148,4 +148,3 @@ micromamba run -n scmil python -V
 micromamba run -n scmil bash -lc \
   "bash scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/local_micromamba --force"
 ```
-어떤데. 
