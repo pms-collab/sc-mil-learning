@@ -73,7 +73,7 @@ ensure_dir() {
 abspath() {
   # prefer realpath if available
   if command -v realpath >/dev/null 2>&1; then
-    realpath "$1"
+    realpath -m "$1"
   else
     # python fallback
     "$PYTHON" - <<'PY' "$1"
@@ -120,10 +120,12 @@ cd "$REPO_ROOT"
 
 # ---------- resolve paths ----------
 CONFIG_ABS="$(abspath "$CONFIG")"
+ensure_dir "$RUNDIR"
 RUNDIR_ABS="$(abspath "$RUNDIR")"
+
 LOGDIR="$RUNDIR_ABS/logs"
 ensure_dir "$LOGDIR"
-ensure_dir "$RUNDIR_ABS"
+
 
 # ---------- parse dataset info from YAML via python (no yq dependency) ----------
 IFS=$'\t' read -r DATA_ROOT DATASET < <(
