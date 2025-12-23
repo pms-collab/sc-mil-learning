@@ -5,6 +5,12 @@ Steps: download → build `raw.h5ad` → preprocess → build MIL bags (group-sp
 
 ## Quickstart (WSL/Ubuntu)
 
+### Prerequisites
+- Git (recommended): verify with `git --version` (Windows users: install “Git for Windows”).
+  - Alternative: download as ZIP from GitHub and unzip.
+- WSL2 + Ubuntu (for the one-command run below)
+- Conda (Miniforge/Anaconda)
+
 ### Get the code
 ```bash
 # Option A) Clone the repo
