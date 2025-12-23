@@ -30,17 +30,16 @@ chmod +x scripts/run_all.sh
 
 ## Output (expected)
 After a successful run:
-- Raw AnnData: data/raw/gse96583_batch2/raw.h5ad
 
-<Rundir> = runs/gse96583_batch2/wsl_e2e
-- Processed AnnData: <RunDir>/preprocess/artifacts/processed.h5ad
-- Bags: <RunDir>/bags/
-  - bags.npz, bags_meta.csv, split_bags.csv, bags.ok
-- Checkpoint: <RunDir>/train/baseline/checkpoints/best.pt
-- Eval: <RunDir>/eval/test/
-  - predictions.csv, metrics.json
-- Leakage report: <RunDir>/leakage/report.json
-- Logs: <RunDir>/logs/*.log
+- Raw AnnData (data cache): `data/raw/gse96583_batch2/raw.h5ad`
+- Run outputs (under `RunDir`, e.g. `runs/gse96583_batch2/wsl_e2e`):
+  - Processed AnnData: `<RunDir>/preprocess/artifacts/processed.h5ad`
+  - Bags: `<RunDir>/bags/` (`bags.npz`, `bags_meta.csv`, `split_bags.csv`, `bags.ok`)
+  - Checkpoint: `<RunDir>/train/baseline/checkpoints/best.pt`
+  - Eval: `<RunDir>/eval/test/` (`predictions.csv`, `metrics.json`)
+  - Leakage report: `<RunDir>/leakage/report.json`
+  - Logs: `<RunDir>/logs/*.log`
+
 
 ## Config contract
 Required adata.obs columns (exact names):
