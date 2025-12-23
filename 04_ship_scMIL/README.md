@@ -34,29 +34,52 @@ This mounts your repo into the container at `/work`, so `data/` and `runs/` are 
 #### Linux / WSL / macOS (bash)
 ```bash
 docker run --rm -it \
+  --user "$(id -u):$(id -g)" \
+  -e HOME=/tmp \
   -v "$PWD":/work \
   -w /work \
   scmil:cpu \
-  micromamba run -n scmil bash -lc \
-  "bash scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/docker_cpu --force"
+  micromamba run -n scmil bash scripts/run_all.sh \
+    --config configs/base.yaml \
+    --rundir runs/gse96583_batch2/docker_cpu \
+    --force
 ```
+If it causes an authority problem in macOS, use this:
+```bash
+docker run --rm -it \
+  -e HOME=/tmp \
+  -v "$PWD":/work \
+  -w /work \
+  scmil:cpu \
+  micromamba run -n scmil bash scripts/run_all.sh \
+    --config configs/base.yaml \
+    --rundir runs/gse96583_batch2/docker_cpu \
+    --force
+```
+
 #### Windows (Powershell)
 ```powershell
 docker run --rm -it `
+  -e HOME=/tmp `
   -v ${PWD}:/work `
   -w /work `
   scmil:cpu `
-  micromamba run -n scmil bash -lc `
-  "bash scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/docker_cpu --force"
+  micromamba run -n scmil bash scripts/run_all.sh `
+    --config configs/base.yaml `
+    --rundir runs/gse96583_batch2/docker_cpu `
+    --force
 ```
 If the bind mount fails on PowerShell, try:
 ```powershell
 docker run --rm -it `
+  -e HOME=/tmp `
   -v ${PWD}.Path:/work `
   -w /work `
   scmil:cpu `
-  micromamba run -n scmil bash -lc `
-  "bash scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/docker_cpu --force"
+  micromamba run -n scmil bash scripts/run_all.sh `
+    --config configs/base.yaml `
+    --rundir runs/gse96583_batch2/docker_cpu `
+    --force
 ```
 
 ## Expected outputs 
