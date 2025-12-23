@@ -1,9 +1,0 @@
-﻿[cmd] C:\Users\SAMSUNG\miniconda3\envs\scmil\python.exe -u -m src.eval --bags_dir C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\bags --ckpt C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\train\baseline\checkpoints\best.pt --out C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\eval\test --splits test
-2025-12-23 15:49:08,914 | INFO | device=cpu
-C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\src\eval.py:209: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
-  df.groupby("group_id")
-2025-12-23 15:49:08,967 | INFO | model=meanpool
-2025-12-23 15:49:08,967 | INFO | eval_splits=('test',) | n_bags=4 | n_groups=2 | acc=1.000
-2025-12-23 15:49:08,967 | INFO | auroc=1.000
-2025-12-23 15:49:08,967 | INFO | wrote C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\eval\test\predictions.csv
-2025-12-23 15:49:08,967 | INFO | wrote C:\Users\SAMSUNG\Desktop\sc-mil-learning\04_ship_scMIL\runs\gse96583_batch2\e2e_dev\eval\test\metrics.json
