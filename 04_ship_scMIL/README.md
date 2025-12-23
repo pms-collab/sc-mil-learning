@@ -1,103 +1,41 @@
 # 04_ship_scMIL
 
-## Goal
-Reproducible scRNA-MIL pipeline with:
-- one-command run
-- baseline metrics (macro_f1)
-- leakage-proof split (donor-level)
+End-to-end scRNA-seq MIL pipeline for **GSE96583 batch2** (PBMC, 8 donors, ctrl/stim).
+Steps: download → build `raw.h5ad` → preprocess → build MIL bags (group-split by donor) → train baseline → eval → leakage check.
 
-## Run (one command)
+## Quickstart (WSL/Ubuntu)
+
+### Environment (conda recommended)
 ```bash
-# positional args: <CONFIG> <OUT>
-bash scripts/run_all.sh configs/base.yaml outputs/run_dev
+conda env create -f environment.yml
+conda activate scmil
 ```
 
-## Outputs (DoD)
-After the command finishes with exit code 0:
-- `outputs/run_dev/metrics/metrics.csv` exists and has column `macro_f1`
-- `outputs/run_dev/leakage_check.txt` exists and contains `group overlap = 0`
-- `outputs/run_dev/logs/*.log` exists
-
-## Config contract (must match column names)
-Required obs/metadata columns (exact names):
-- donor_id
-- condition # label: IFN-stimulated vs control
-- sample_id # bag_id = donor_id + condition (or equivalent unique sample key)
-Required bags.parquet columns:
-- cell_id, bag_id, label, group_id, split
-
-## Pipeline steps (executed by `scripts/run_all.sh`)
-1) Download/cache dataset (GSE96583)
-2) Preprocess: QC → normalize/log1p → HVG → PCA → save features
-3) Build bags + group split (`group_id = donor_id`)
-4) Train MIL (`meanpool` baseline, then `abmil`)
-5) Evaluate → metrics + per-class
-6) Leakage check → write `leakage_check.txt` (FAIL => non-zero exit)
-
-## Output layout (expected files)
-After a successful run, the following paths must exist:
-- `outputs/run_dev/logs/01_download.log`
-- `outputs/run_dev/logs/02_preprocess.log`
-- `outputs/run_dev/logs/03_build_bags.log`
-- `outputs/run_dev/logs/04_train.log`
-- `outputs/run_dev/logs/05_eval.log`
-- `outputs/run_dev/artifacts/processed.h5ad`
-- `outputs/run_dev/artifacts/features.parquet` (or `features.npy`)
-- `outputs/run_dev/artifacts/bags.parquet`
-- `outputs/run_dev/preds/preds.parquet`
-- `outputs/run_dev/metrics/metrics.csv`
-- `outputs/run_dev/metrics/per_class.csv` (optional but recommended)
-- `outputs/run_dev/leakage_check.txt`
-
-## Installation
+### Run (one command)
+From the project root('04_ship_scMIL'):
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows (PowerShell): .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+chmod +x scripts/run_all.sh
+./scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/wsl_e2e --force
 ```
 
-## Currenet state (checkpoint DoD)
-- `scripts/run_all.sh` exists
-- `configs/base.yaml` exists
-- running `bash scripts/run_all.sh configs/base.yaml outputs/run_dev` creates:
-  - `outputs/run_dev/metrics/metrics.csv` with column `macro_f1`
-  - `outputs/run_dev/leakage_check.txt` containing `group overlap = 0`
-  - `outputs/run_dev/logs/*.log`
+## Output (expected)
+After a successful run:
+- Raw AnnData: data/raw/gse96583_batch2/raw.h5ad
+- Processed AnnData: <RunDir>/preprocess/artifacts/processed.h5ad
+- Bags: <RunDir>/bags/
+  - bags.npz, bags_meta.csv, split_bags.csv, bags.ok
+- Checkpoint: <RunDir>/train/baseline/checkpoints/best.pt
+- Eval: <RunDir>/eval/test/
+  - predictions.csv, metrics.json
+- Leakage report: <RunDir>/leakage/report.json
+- Logs: <RunDir>/logs/*.log
 
+## Config contract
+Required adata.obs columns (exact names):
+- donor_id (used as group_id)
+- condition (label, e.g. ctrl/stim)
+- sample_id (bag identifier; must be unique per donor×condition or equivalent)
 
-## Troubleshooting(paste if blocked)
-```text
-- commit hash:
-- command you ran:
-- OS (Windows/WSL/Linux):
-- python -V:
-- pip freeze (first 30 lines):
-- last 200 lines of the failing log:
-- tree -a -L 4 outputs/run_dev:
-- contents of outputs/run_dev/leakage_check.txt:
-```
-
-## Data access
-- Raw/cache data directory: `data/` (gitignored)
-- Expected structure (created by downloader):
-  - `data/raw/gse96583/`
-  - `data/raw/gse96583/metadata.csv` (must include `cell_id, donor_id, condition, sample_id`)
-
-## Model selection
-Set in `configs/base.yaml`:
-- `mil.model: meanpool` (baseline, first milestone)
-- `mil.model: abmil` (submission model)
-
-## Current state (checkpoint DoD)
-- [ ] `scripts/run_all.sh` exists
-- [ ] `configs/base.yaml` exists
-- [ ] Running the command creates DoD outputs:
-```bash
-bash scripts/run_all.sh configs/base.yaml outputs/run_dev
-```
-creates:
-- `outputs/run_dev/metrics/metrics.csv` has column `macro_f1`
-- `outputs/run_dev/leakage_check.txt` contains `group overlap = 0`
-- `outputs/run_dev/logs/` contains `*.log`
-
-Note: current pipeline is a stub scaffold; real GSE96583 + MIL training will replace stubs next.
+## Notes
+- scikit-misc is only needed if you want Scanpy HVG selection with flavor="seurat_v3"; otherwise the code falls back.
+- Baseline metrics can look artificially high because the dataset is small at the bag level (16 bags total in this setup). Do not over-interpret.
