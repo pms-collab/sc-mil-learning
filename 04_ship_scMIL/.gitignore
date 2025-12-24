@@ -12,6 +12,10 @@ data/**/_download/
 *.csv.gz
 *.log
 
+## but track python package code under src
+!src/scmil/data/
+!src/scmil/data/**
+
 # OS/editor
 .DS_Store
 Thumbs.db
