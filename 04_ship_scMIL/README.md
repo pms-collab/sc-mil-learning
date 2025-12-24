@@ -49,10 +49,11 @@ This mounts your repo into the container at `/work`, so `data/` and `runs/` are 
 docker run --rm -it \
   --user "$(id -u):$(id -g)" \
   -e HOME=/tmp \
+  -e PYTHONPATH=/work/src \
   -v "$PWD":/work \
   -w /work \
   scmil:cpu \
-  micromamba run -n scmil bash scripts/run_all.sh \
+  micromamba run -n scmil python scripts/run_all.py \
     --config configs/base.yaml \
     --rundir runs/gse96583_batch2/docker_cpu \
     --force
@@ -61,10 +62,11 @@ If it causes an authority problem in macOS, use this:
 ```bash
 docker run --rm -it \
   -e HOME=/tmp \
+  -e PYTHONPATH=/work/src \
   -v "$PWD":/work \
   -w /work \
   scmil:cpu \
-  micromamba run -n scmil bash scripts/run_all.sh \
+  micromamba run -n scmil python scripts/run_all.py \
     --config configs/base.yaml \
     --rundir runs/gse96583_batch2/docker_cpu \
     --force
@@ -76,10 +78,11 @@ docker run --rm -it \
 ```powershell
 docker run --rm -it `
   -e HOME=/tmp `
+  -e PYTHONPATH=/work/src `
   -v ${PWD}:/work `
   -w /work `
   scmil:cpu `
-  micromamba run -n scmil bash scripts/run_all.sh `
+  micromamba run -n scmil python scripts/run_all.py `
     --config configs/base.yaml `
     --rundir runs/gse96583_batch2/docker_cpu `
     --force
@@ -88,10 +91,11 @@ If the bind mount fails on PowerShell, try:
 ```powershell
 docker run --rm -it `
   -e HOME=/tmp `
-  -v ${PWD}.Path:/work `
+  -e PYTHONPATH=/work/src `
+  -v ${PWD}:/work `
   -w /work `
   scmil:cpu `
-  micromamba run -n scmil bash scripts/run_all.sh `
+  micromamba run -n scmil python scripts/run_all.py `
     --config configs/base.yaml `
     --rundir runs/gse96583_batch2/docker_cpu `
     --force
@@ -160,6 +164,12 @@ If you don't want Docker, avoid `activate` and just use `micromamba run`.
 ```bash
 micromamba create -y -n scmil -f environment.yml
 micromamba run -n scmil python -V
-micromamba run -n scmil bash -lc \
-  "bash scripts/run_all.sh --config configs/base.yaml --rundir runs/gse96583_batch2/local_micromamba --force"
+
+# recommended (stable imports)
+micromamba run -n scmil pip install -e .
+
+micromamba run -n scmil python scripts/run_all.py \
+  --config configs/base.yaml \
+  --rundir runs/gse96583_batch2/local_micromamba \
+  --force
 ```
